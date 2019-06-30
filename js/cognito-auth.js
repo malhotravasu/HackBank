@@ -42,7 +42,8 @@ var HackBank = window.HackBank || {};
                     resolve(session.getIdToken().getJwtToken());
                 }
             });
-        } else {
+        }
+        else {
             resolve(null);
         }
     });

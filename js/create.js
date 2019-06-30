@@ -4,10 +4,12 @@ var HackBank = window.HackBank || {};
 HackBank.map = HackBank.map || {};
 
 (function rideScopeWrapper($) {
+
     var authToken;
     HackBank.authToken.then(function setAuthToken(token) {
         if (token) {
             authToken = token;
+            console.log("Your Auth Token is:", authToken);
         } else {
             window.location.href = '/signin.html';
         }
@@ -15,7 +17,8 @@ HackBank.map = HackBank.map || {};
         alert(error);
         window.location.href = '/signin.html';
     });
-    function requestUnicorn(pickupLocation) {
+
+    function submitQuestion(question) {
         $.ajax({
             method: 'POST',
             url: _config.api.invokeUrl + '/create',
@@ -23,90 +26,55 @@ HackBank.map = HackBank.map || {};
                 Authorization: authToken
             },
             data: JSON.stringify({
-                PickupLocation: {
-                    Latitude: pickupLocation.latitude,
-                    Longitude: pickupLocation.longitude
+                Item: {
+                    "Constraints": question.constraints,
+                    "Description": question.desc,
+                    "Input Format": question.inf,
+                    "Output Format": question.outf,
+                    "Question Name": question.qname,
+                    "Sample Test Cases": question.stcases
                 }
             }),
             contentType: 'application/json',
-            success: completeRequest,
+            success: function createSuccess(result) {
+                console.log(result);
+                alert('Creation Sucessful');
+            },
             error: function ajaxError(jqXHR, textStatus, errorThrown) {
-                console.error('Error requesting ride: ', textStatus, ', Details: ', errorThrown);
+                console.error('Error creating question: ', textStatus, ', Details: ', errorThrown);
                 console.error('Response: ', jqXHR.responseText);
-                alert('An error occured when requesting your unicorn:\n' + jqXHR.responseText);
+                alert('An error occured when creating your question:\n' + jqXHR.responseText);
             }
         });
     }
 
     function completeRequest(result) {
-        var unicorn;
-        var pronoun;
         console.log('Response received from API: ', result);
-        unicorn = result.Unicorn;
-        pronoun = unicorn.Gender === 'Male' ? 'his' : 'her';
-        displayUpdate(unicorn.Name + ', your ' + unicorn.Color + ' unicorn, is on ' + pronoun + ' way.');
-        animateArrival(function animateCallback() {
-            displayUpdate(unicorn.Name + ' has arrived. Giddy up!');
-            HackBank.map.unsetLocation();
-            $('#request').prop('disabled', 'disabled');
-            $('#request').text('Set Pickup');
-        });
     }
 
     // Register click handler for #request button
     $(function onDocReady() {
-        $('#request').click(handleRequestClick);
+        $('#create').click(handleRequestClick);
         $('#signOut').click(function() {
             HackBank.signOut();
             alert("You have been signed out.");
             window.location = "signin.html";
         });
-        $(HackBank.map).on('pickupChange', handlePickupChanged);
-
-        HackBank.authToken.then(function updateAuthMessage(token) {
-            if (token) {
-                displayUpdate('You are authenticated. Click to see your <a href="#authTokenModal" data-toggle="modal">auth token</a>.');
-                $('.authToken').text(token);
-            }
-        });
-
-        if (!_config.api.invokeUrl) {
-            $('#noApiMessage').show();
-        }
     });
 
-    function handlePickupChanged() {
-        var requestButton = $('#request');
-        requestButton.text('Request Unicorn');
-        requestButton.prop('disabled', false);
-    }
-
     function handleRequestClick(event) {
-        var pickupLocation = HackBank.map.selectedPoint;
         event.preventDefault();
-        requestUnicorn(pickupLocation);
+        question = {};
+
+        question.constraints = "TEST CONSTRAINTS";
+        question.desc = "TEST DESCRIPTION";
+        question.inf = "TEST INPUT FORMAT";
+        question.outf = "TEST OUTPUT FORMAT";
+        question.qname = "TEST QUESTION";
+        question.stcases = [
+            ["TEST INPUT", "TEST OUTPUT"]
+        ];
+
+        submitQuestion(question);
     }
-
-    function animateArrival(callback) {
-        var dest = HackBank.map.selectedPoint;
-        var origin = {};
-
-        if (dest.latitude > HackBank.map.center.latitude) {
-            origin.latitude = HackBank.map.extent.minLat;
-        } else {
-            origin.latitude = HackBank.map.extent.maxLat;
-        }
-
-        if (dest.longitude > HackBank.map.center.longitude) {
-            origin.longitude = HackBank.map.extent.minLng;
-        } else {
-            origin.longitude = HackBank.map.extent.maxLng;
-        }
-
-        HackBank.map.animate(origin, dest, callback);
-    }
-
-    function displayUpdate(text) {
-        $('#updates').append($('<li>' + text + '</li>'));
-    }
-}(jQuery));
+} (jQuery));
