@@ -19,12 +19,48 @@
 <body>
 
 
-    <form id="quesCreateForm">
-    <div>
-            <button id="create" class="btn btn-primary">Submit</button>
-            <a id="signOut" href="#" class="btn btn-primary">Sign out</a>
-        </div>
+    <form id="createQuesForm">
+        <div>
+                <h1>Question Submission Portal</h1>
+            </div>
+    
+            <div>
+                <label for="qname">Question Name</label>
+                <input type="text" id="qname">
+            </div>
+    
+            <div>
+                <label for="desc">Description</label>
+                <textarea id="desc"></textarea>
+            </div>
+    
+            <div>
+                <label for="inf">Input Format</label>
+                <textarea id="inf"></textarea>
+            </div>
+    
+            <div>
+                <label for="outf">Output Format</label>
+                <textarea id="outf"></textarea>
+            </div>
+    
+            <div>
+                <label for="constraints">Constraints</label>
+                <textarea id="constraints"></textarea>
+            </div>
+    
+            <div>
+                <label for="testCaseWrap">Sample Test Cases</label>
+                <div id="testCaseWrap">
+                    <div id="testCase0">
+                        <label>Test Case 1</label><textarea id="sampleInput0"></textarea><textarea id="sampleOutput0"></textarea>
+                    </div>
+                </div>
+                <button id="addCase" type="button">Add Another Case</button>
+            </div>
+        <button id="create" class="btn btn-primary">Create Question</button>
     </form>
+    <a id="signOut" href="#" class="btn btn-primary">Sign out</a>
 
     <script src="js/vendor/jquery-3.1.0.js"></script>
     <script src="js/vendor/bootstrap.min.js"></script>

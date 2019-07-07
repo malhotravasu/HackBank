@@ -42,5 +42,6 @@ function readForm() {
         question.stcases[i] = testCase;
     }
 
-    console.log(JSON.stringify(question));
+    // console.log(JSON.stringify(question));
+    return question
 }
