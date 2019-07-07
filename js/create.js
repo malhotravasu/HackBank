@@ -9,7 +9,6 @@ HackBank.map = HackBank.map || {};
     HackBank.authToken.then(function setAuthToken(token) {
         if (token) {
             authToken = token;
-            console.log("Your Auth Token is:", authToken);
         } else {
             window.location.href = '/signin.html';
         }
@@ -26,7 +25,7 @@ HackBank.map = HackBank.map || {};
                 Authorization: authToken
             },
             data: JSON.stringify({
-                Item: {
+                body: {
                     "Constraints": question.constraints,
                     "Description": question.desc,
                     "Input Format": question.inf,
@@ -37,7 +36,7 @@ HackBank.map = HackBank.map || {};
             }),
             contentType: 'application/json',
             success: function createSuccess(result) {
-                console.log(result);
+                console.log("Success Response: ", result);
                 alert('Creation Sucessful');
             },
             error: function ajaxError(jqXHR, textStatus, errorThrown) {
@@ -46,10 +45,6 @@ HackBank.map = HackBank.map || {};
                 alert('An error occured when creating your question:\n' + jqXHR.responseText);
             }
         });
-    }
-
-    function completeRequest(result) {
-        console.log('Response received from API: ', result);
     }
 
     // Register click handler for #request button
@@ -72,7 +67,7 @@ HackBank.map = HackBank.map || {};
         question.outf = "TEST OUTPUT FORMAT";
         question.qname = "TEST QUESTION";
         question.stcases = [
-            ["TEST INPUT", "TEST OUTPUT"]
+            ["TEST INPUT 1", "TEST OUTPUT 1"]
         ];
 
         submitQuestion(question);
